@@ -18,6 +18,9 @@ export class ArticleService {
     create(articleIF: ArticleIF): Observable<ArticleIF> {
         console.log(articleIF);
         console.log(articleIF.title);
+        const date = new Date();
+        articleIF.created_at = date;
+        articleIF.updated_at = date;
         return this.generateSlug(articleIF.title).pipe(
             switchMap((slug: string) => {
                 articleIF.slug = slug;
@@ -32,5 +35,24 @@ export class ArticleService {
 
     findOne(id: number): Observable<ArticleIF> {
         return from(this.articleRepository.findOneById(id));
+    }
+
+    update(id: number, articleIF: ArticleIF): Observable<ArticleIF> {
+        console.log(articleIF.body);
+        articleIF.updated_at = new Date();
+        return this.generateSlug(articleIF.title).pipe(
+            switchMap((slug: string) => {
+                articleIF.slug = slug;
+                return from(this.articleRepository.update(id, articleIF)).pipe(
+                switchMap(() => this.articleRepository.findOneById(id)),
+                // map(article => article),
+                // catchError(err => of({ err }))
+                );
+            })
+        );
+    }
+
+    delete(id: number): Observable<any> {
+        return from(this.articleRepository.delete(id));
     }
 }
