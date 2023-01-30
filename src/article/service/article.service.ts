@@ -16,8 +16,6 @@ export class ArticleService {
 
     // generate slug and put it into Interface
     create(articleIF: ArticleIF): Observable<ArticleIF> {
-        console.log(articleIF);
-        console.log(articleIF.title);
         const date = new Date();
         articleIF.created_at = date;
         articleIF.updated_at = date;

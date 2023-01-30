@@ -4,10 +4,13 @@ import { ArticleIF } from '../model/article.interface';
 import { ArticleService } from '../service/article.service';
 import { ArticleEntity } from '../entities/article.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { S3Service } from '../service/s3.service';
 
 @Controller('api-text')
 export class ArticleController {
-  constructor(private readonly service: ArticleService) {}
+  constructor(private readonly service: ArticleService,
+              private readonly s3: S3Service
+  ) {}
 
   @Get()
   findAll(): string {
@@ -23,6 +26,8 @@ export class ArticleController {
   @Post()
   create(@Body()articleIF: ArticleIF): Observable<ArticleIF> {
       if(!articleIF.title || !articleIF.body) throw new Error("title and body are required field!");
+      // body -> s3.url
+      // s3 -> db(err -> delete it from s3)
       return this.service.create(articleIF);
   }
 
@@ -32,7 +37,9 @@ export class ArticleController {
       return this.service.update(id, articleIF);
   }
   @Delete(':id')
-  delete(@Param('id') id: number) {
+  async delete(@Param('id') id: number, @Body() title: string) {
+      // delete it from bucket
+      await this.s3.deleteText(id, title);
       return this.service.delete(id);
   }
 }
