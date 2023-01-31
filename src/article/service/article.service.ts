@@ -33,6 +33,11 @@ export class ArticleService {
 
     findOne(id: number): Observable<ArticleIF> {
         return from(this.articleRepository.findOneById(id));
+        // from(this.articleRepository.findOneById(id)).subscribe(
+        //     (data: ArticleIF) => {
+        //         data.body
+        //     }
+        // )
     }
 
     update(id: number, articleIF: ArticleIF): Observable<ArticleIF> {

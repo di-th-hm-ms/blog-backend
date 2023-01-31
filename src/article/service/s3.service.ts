@@ -45,10 +45,18 @@ export class S3Service {
 
     // Text
 
-    async uploadText(articleIF: ArticleIF): Promise<any> {
+    getTextFile(title: string): Observable<any> {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: 'article-bodies/' + articleIF.title + '.html',
+            Key: `article-bodies/${title}.html`,
+        }
+        return from(this.s3.getObject(params).createReadStream());
+    }
+
+    uploadText(articleIF: ArticleIF): Observable<any> {
+        const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: `article-bodies/${articleIF.title}.html`,
             Body: articleIF.body
         }
         // try {
@@ -56,14 +64,14 @@ export class S3Service {
         // } catch (error) {
         //     console.log(error);
         // }
-        return this.s3.upload(params).promise();
+        return from(this.s3.upload(params).promise());
     }
 
-    async deleteText(id: number, title: string) {
+    deleteText(title: string) {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
             Key: 'article-bodies/' + title + '.html',
         }
-        return this.s3.deleteObject(params).promise();
+        return from(this.s3.deleteObject(params).promise());
     }
 }
