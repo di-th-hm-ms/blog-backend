@@ -6,15 +6,15 @@ import { ArticleEntity } from '../entities/article.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { S3Service } from '../service/s3.service';
 
-@Controller('api-text')
+@Controller('api')
 export class ArticleController {
   constructor(private readonly service: ArticleService,
               private readonly s3: S3Service
   ) {}
 
   @Get()
-  findAll(): string {
-    return "findAll";
+  findAll(): Observable<ArticleIF[]> {
+        return this.service.findAll();
   }
 
   // Auto-increment ID -> Index
@@ -32,7 +32,8 @@ export class ArticleController {
     //       }));
     return this.service.findOne(id).pipe(
         switchMap((article: ArticleIF) =>
-          this.s3.getTextFile(article.title).pipe(
+        //   this.s3.getTextFile(article.title).pipe(
+          this.s3.getTextFile(article.body).pipe(
             map(data => {
                 article.body = new TextDecoder().decode(new Uint8Array(data));
                 return article;
@@ -50,7 +51,7 @@ export class ArticleController {
       this.s3.uploadText(articleIF).subscribe(
           (val: any) => {
             console.log(val);
-            articleIF.body = `article-bodies/${articleIF.title}.html`;
+            articleIF.body = `article-bodies/${articleIF.title}.md`;
             return this.service.create(articleIF).subscribe(
                 (data: ArticleIF) => {
                     console.log(data);

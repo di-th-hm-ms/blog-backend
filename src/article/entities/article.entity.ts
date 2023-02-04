@@ -11,10 +11,10 @@ import {
 
 @Entity()
 export class Category {
-      @PrimaryGeneratedColumn()
-      id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column()
+    @Column({ nullable: false })
     name: string;
 
     // @Column()
@@ -29,11 +29,14 @@ export class ArticleEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @Column()
+  @Column({ nullable: false })
   title: string;
 
   @Column('text', { nullable: false })
   body: string;
+
+  @Column({ nullable: false })
+  summary: string;
 
   @CreateDateColumn()
   readonly created_at?: Date;
@@ -74,16 +77,16 @@ export class Media {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   type: 'image' | 'video';
 
-  @Column()
-  url: string;
+  @Column({ nullable: false })
+  key: string;
 
   @ManyToOne(() => ArticleEntity, article => article.media)
   @JoinColumn({
-    name: 'article_id',
-    referencedColumnName: 'id'
+      name: 'article_id',
+      referencedColumnName: 'id'
   })
   article: ArticleEntity;
 }

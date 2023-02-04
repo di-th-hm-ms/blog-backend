@@ -31,6 +31,9 @@ export class ArticleService {
         return of(slugify(str));
     }
 
+    findAll(): Observable<ArticleIF[]> {
+        return from(this.articleRepository.find());
+    }
     findOne(id: number): Observable<ArticleIF> {
         return from(this.articleRepository.findOneById(id));
         // from(this.articleRepository.findOneById(id)).subscribe(

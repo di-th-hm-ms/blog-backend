@@ -1,5 +1,6 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Param, Get, Body } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Param, Get, Body, Res } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Observable, map } from 'rxjs';
 import { S3 } from 'aws-sdk';
 import { ArticleIF } from '../model/article.interface';
 import { S3Service } from '../service/s3.service';
@@ -19,12 +20,18 @@ export class ImagesController {
   @Post('img-upload')
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(@UploadedFile() image) {
+      console.log("img upload start")
         await this.service.uploadImage(image);
   }
 
   @Get(':key')
-  async downloadImage(@Param('key') key: string) {
-    return this.service.getImage(key);
+  // downloadImage(@Param('key') key: string, @Res() res): Observable<any> {
+  async downloadImage(@Param('key') key: string, @Res() res) {
+      console.log(key)
+      const image = await this.service.getImage(key);
+      // res.contentType(image.ContentType);
+      res.contentType('blob');
+      res.send(image.Body);
   }
 
 //   @Post('text-upload')

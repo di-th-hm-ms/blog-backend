@@ -13,7 +13,7 @@ export class S3Service {
     private readonly s3 = new S3({
         accessKeyId: process.env.S3_ACCESS_KEY_LOCAL,
         secretAccessKey: process.env.S3_SECRET_KEY_LOCAL,
-        // region: process.env.S3_REGION,
+        region: process.env.S3_REGION,
     });
     constructor(
     ) {}
@@ -37,18 +37,20 @@ export class S3Service {
     async getImage(key: string) {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: key,
+            Key: `articleImages/${key}`,
         };
-        const image = await this.s3.getObject(params).promise();
-        return image.Body;
+        return this.s3.getObject(params).promise();
+        // return image.Body;
     }
 
     // Text
 
-    getTextFile(title: string): Observable<any> {
+    // getTextFile(title: string): Observable<any> {
+    getTextFile(body: string): Observable<any> {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: `article-bodies/${title}.html`,
+            // Key: `article-bodies/${title}.md`,
+            Key: body,
         }
         return from(this.s3.getObject(params).createReadStream());
     }
@@ -56,7 +58,7 @@ export class S3Service {
     uploadText(articleIF: ArticleIF): Observable<any> {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: `article-bodies/${articleIF.title}.html`,
+            Key: `article-bodies/${articleIF.title}.md`,
             Body: articleIF.body
         }
         // try {
@@ -70,7 +72,7 @@ export class S3Service {
     deleteText(title: string) {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: 'article-bodies/' + title + '.html',
+            Key: 'article-bodies/' + title + '.md',
         }
         return from(this.s3.deleteObject(params).promise());
     }
