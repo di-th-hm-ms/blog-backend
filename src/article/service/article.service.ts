@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Observable, of, from } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArticleEntity } from '../entities/article.entity';
+import { ArticleEntity, Media } from '../entities/article.entity';
 import { ArticleIF } from '../model/article.interface'
 import { Repository } from 'typeorm';
 import { switchMap } from 'rxjs/operators';
@@ -12,6 +12,8 @@ export class ArticleService {
     constructor(
         @InjectRepository(ArticleEntity)
         private readonly articleRepository: Repository<ArticleEntity>,
+        @InjectRepository(Media)
+        private readonly mediaRepository: Repository<Media>,
     ) {}
 
     // generate slug and put it into Interface

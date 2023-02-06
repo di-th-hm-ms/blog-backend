@@ -81,7 +81,10 @@ export class Media {
   type: 'image' | 'video';
 
   @Column({ nullable: false })
-  key: string;
+  key_part: string;
+
+  @Column()
+  article_id: number;
 
   @ManyToOne(() => ArticleEntity, article => article.media)
   @JoinColumn({
