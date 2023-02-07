@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Request, Body, Param, UploadedFile } from '@nestjs/common';
 import { Observable, of, switchMap, map } from 'rxjs';
-import { ArticleIF, MediaIF, MediaPost } from '../model/article.interface';
+import { ArticleIF, MediaIF, MediaPost, TagIF } from '../model/article.interface';
 import { ArticleService } from '../service/article.service';
 import { ArticleEntity } from '../entities/article.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -107,5 +107,23 @@ export class ArticleController {
           }),
           catchError((err: Error) => { return of(err); }))
       }
+  }
+
+  // tag
+  @Get('tags')
+  findTags(): Observable<any> {
+      return this.service.findTags();
+  }
+
+  @Post('tags')
+  createTag(@Body() tagIF: TagIF): Observable<any> {
+      if (!tagIF.name) throw new Error("tag: parameter is not enough")
+      return this.service.createTag(tagIF);
+  }
+
+  @Post('tags/attach')
+  attachTag(@Body() article_id: number, tag_id: number) {
+      if (!article_id || !tag_id) throw new Error("tag: parameters are not enough");
+      return this.service.attachTag(article_id, tag_id);
   }
 }

@@ -7,6 +7,9 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity()
@@ -21,7 +24,7 @@ export class Category {
     // description: string;
 
     @OneToMany(() => ArticleEntity, article => article.category)
-    posts: ArticleEntity[];
+    articles: ArticleEntity[];
 }
 
 @Entity()
@@ -47,7 +50,7 @@ export class ArticleEntity {
   @Column()
   category_id: number;
 
-  @ManyToOne(() => Category, category => category.posts)
+  @ManyToOne(() => Category, category => category.articles)
   @JoinColumn({
     name: 'category_id',
     referencedColumnName: 'id'
@@ -62,6 +65,14 @@ export class ArticleEntity {
 
   @Column()
   slug: string;
+
+  @ManyToMany(type => Tag, tag => tag.articles)
+  @JoinTable({
+    name: 'article_tag',
+    joinColumn: { name: 'article_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'tag_id', referencedColumnName: 'id' }
+  })
+  tags: Tag[];
 
   constructor(title: string, body: string) {
     this.title = title;
@@ -92,4 +103,42 @@ export class Media {
       referencedColumnName: 'id'
   })
   article: ArticleEntity;
+}
+
+@Entity()
+export class Tag {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @ManyToMany(type => ArticleEntity, article => article.tags)
+  // only once is enough
+  // @JoinTable({
+  //   name: 'article_tag',
+  //   joinColumn: { name: 'tag_id', referencedColumnName: 'id' },
+  //   inverseJoinColumn: { name: 'article_id', referencedColumnName: 'id' }
+  // })
+  articles: ArticleEntity[];
+}
+
+@Entity()
+export class ArticleTag {
+  @PrimaryColumn({ name: 'article_id' })
+  article_id: number;
+
+  // @ManyToOne(type => ArticleEntity, article => article.tags)
+  @PrimaryColumn({ name: 'tag_id' })
+  tag_id: number;
+
+  @ManyToOne(type => ArticleEntity, article => article.tags)
+  @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+  article: ArticleEntity;
+  // articles: ArticleEntity[];
+
+  @ManyToOne(type => Tag, tag => tag.articles)
+  @JoinColumn({ name: 'tag_id', referencedColumnName: 'id' })
+  tag: Tag;
+  // tags: Tag[];
 }
