@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Observable, of, from } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArticleEntity } from '../entities/article.entity';
-import { ArticleIF } from '../model/article.interface'
+import { ArticleEntity, Media, Tag, ArticleTag } from '../entities/article.entity';
+import { ArticleIF, TagIF } from '../model/article.interface'
 import { Repository } from 'typeorm';
 import { switchMap } from 'rxjs/operators';
 import slugify from 'slugify';
@@ -12,6 +12,10 @@ export class ArticleService {
     constructor(
         @InjectRepository(ArticleEntity)
         private readonly articleRepository: Repository<ArticleEntity>,
+        @InjectRepository(Tag)
+        private readonly tagRepository: Repository<Tag>,
+        @InjectRepository(ArticleTag)
+        private readonly articleTagRepository: Repository<ArticleTag>
     ) {}
 
     // generate slug and put it into Interface
@@ -31,6 +35,9 @@ export class ArticleService {
         return of(slugify(str));
     }
 
+    findAll(): Observable<ArticleIF[]> {
+        return from(this.articleRepository.find());
+    }
     findOne(id: number): Observable<ArticleIF> {
         return from(this.articleRepository.findOneById(id));
         // from(this.articleRepository.findOneById(id)).subscribe(
@@ -57,5 +64,31 @@ export class ArticleService {
 
     delete(id: number): Observable<any> {
         return from(this.articleRepository.delete(id));
+    }
+
+    // tag
+    findTags(): Observable<TagIF[]> {
+        return from(this.tagRepository.find());
+    }
+    createTag(tagIF: TagIF): Observable<TagIF> {
+        // insert new one into tag
+        return from(this.tagRepository.save(tagIF));
+    }
+
+    attachTag(article_id: number, tag_id: number): Observable<any> {
+        // article_id and tag_id
+        return of(this.articleTagRepository.save({
+            article_id: article_id,
+            tag_id: tag_id
+        }))
+    }
+
+    detachTagByTagId(id: number) {
+        // delete article_tag where both ids are corresponded.
+        return of(this.articleTagRepository.delete({tag_id: id}))
+    }
+    detachTagByArticleId(id: number) {
+        // delete article_tag where both ids are corresponded.
+        return of(this.articleTagRepository.delete({article_id: id}))
     }
 }
