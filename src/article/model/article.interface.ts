@@ -5,9 +5,9 @@ export interface ArticleIF {
     summary: string;
     created_at?: Date;
     updated_at?: Date;
-    // category: Category;
     category_id?: number
     slug?: string;
+    header_image?: string;
 }
 
 export interface CategoryIF {

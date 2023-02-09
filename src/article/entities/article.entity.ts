@@ -66,6 +66,9 @@ export class ArticleEntity {
   @Column()
   slug: string;
 
+  @Column()
+  header_image?: string;
+
   @ManyToMany(type => Tag, tag => tag.articles)
   @JoinTable({
     name: 'article_tag',
