@@ -34,7 +34,7 @@ export interface TagIF {
     name: string;
     description?: string;
 }
-export interface TagPost {
+export interface ArticleTag {
     article_id: number
     tag_ids: number[]
 }

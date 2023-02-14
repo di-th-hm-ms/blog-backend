@@ -38,6 +38,7 @@ export class ArticleService {
     findAll(): Observable<ArticleIF[]> {
         return from(this.articleRepository.find());
     }
+
     findOne(id: number): Observable<ArticleIF> {
         return from(this.articleRepository.findOneById(id));
         // from(this.articleRepository.findOneById(id)).subscribe(
@@ -46,6 +47,7 @@ export class ArticleService {
         //     }
         // )
     }
+
 
     update(id: number, articleIF: ArticleIF): Observable<ArticleIF> {
         console.log(articleIF.body);
@@ -70,11 +72,13 @@ export class ArticleService {
     findTags(): Observable<TagIF[]> {
         return from(this.tagRepository.find());
     }
+
     createTag(tagIF: TagIF): Observable<TagIF> {
         // insert new one into tag
         return from(this.tagRepository.save(tagIF));
     }
 
+    // article_tag
     attachTag(article_id: number, tag_id: number): Observable<any> {
         // article_id and tag_id
         return of(this.articleTagRepository.save({
@@ -87,8 +91,13 @@ export class ArticleService {
         // delete article_tag where both ids are corresponded.
         return of(this.articleTagRepository.delete({tag_id: id}))
     }
+
     detachTagByArticleId(id: number) {
         // delete article_tag where both ids are corresponded.
         return of(this.articleTagRepository.delete({article_id: id}))
+    }
+
+    findArticleTagsByTag(tagId: number): Observable<ArticleTag[]> {
+        return from(this.articleTagRepository.findBy({ tag_id: tagId }));
     }
 }
