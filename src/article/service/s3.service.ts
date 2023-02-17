@@ -58,8 +58,8 @@ export class S3Service {
     uploadText(articleIF: ArticleIF): Observable<any> {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: `article-bodies/${articleIF.title}.md`,
-            Body: articleIF.body
+            Key: `article-bodies/${articleIF.translation.language_id}/${articleIF.translation.title}.md`,
+            Body: articleIF.translation.body
         }
         // try {
         //     await this.s3.upload(params).promise();
@@ -72,7 +72,7 @@ export class S3Service {
     deleteText(title: string) {
         const params = {
             Bucket: process.env.S3_BUCKET_NAME,
-            Key: 'article-bodies/' + title + '.md',
+            Key: `article-bodies/${title}.md`,
         }
         return from(this.s3.deleteObject(params).promise());
     }

@@ -1,13 +1,25 @@
 export interface ArticleIF {
     id?: number;
-    title: string;
-    body: string;
-    summary: string;
+    translation?: ArticleTranslationIF
     created_at?: Date;
     updated_at?: Date;
     category_id?: number
-    slug?: string;
     header_image?: string;
+}
+
+export interface ArticleTranslationIF {
+    id?: number
+    title: string;
+    body: string;
+    summary: string;
+    slug?: string;
+    article_id: number
+    language_id: number
+}
+
+export interface LanguageIF {
+    id?: number
+    name: string
 }
 
 export interface CategoryIF {
