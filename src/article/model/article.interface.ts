@@ -1,13 +1,26 @@
 export interface ArticleIF {
     id?: number;
-    title: string;
-    body: string;
-    summary: string;
+    translation?: ArticleTranslationIF
     created_at?: Date;
     updated_at?: Date;
     category_id?: number
-    slug?: string;
     header_image?: string;
+}
+
+export interface ArticleTranslationIF {
+    id?: number
+    title: string;
+    body: string;
+    summary: string;
+    slug?: string;
+    article_id: number
+    language_id: number
+}
+
+export interface LanguageIF {
+    id?: number
+    name: string
+    language: string
 }
 
 export interface CategoryIF {
@@ -34,7 +47,34 @@ export interface TagIF {
     name: string;
     description?: string;
 }
-export interface TagPost {
+export interface ArticleTag {
     article_id: number
     tag_ids: number[]
+}
+
+export interface GptReqBody {
+    model: string;
+    prompt: string;
+    temperature: number;
+    max_tokens: number;
+}
+
+// export interface GptReqOptions {
+//     method: 'POST';
+//     headers: {
+//         'Content-Type': string;
+//         'Authorization': string;
+//     }
+//     payload?: string;
+// }
+export interface GptReqOptions {
+    'headers': {
+        'Content-Type': string;
+        'Authorization': string;
+    }
+}
+
+export interface GptProperties {
+    prompt: string;
+    language: string;
 }

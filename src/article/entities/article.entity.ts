@@ -28,18 +28,31 @@ export class Category {
 }
 
 @Entity()
+export class Language {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: false })
+  name: string;
+
+  @Column({ nullable: false })
+  language: string;
+
+  @OneToMany(type => ArticleTranslation, articleTranslation => articleTranslation.language)
+  articleTranslations: ArticleTranslation[];
+}
+
+
+
+@Entity()
 export class ArticleEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @Column({ nullable: false })
-  title: string;
+  @OneToMany(type => ArticleTranslation, articleTranslation => articleTranslation.article)
+  translations: ArticleTranslation[];
 
-  @Column('text', { nullable: false })
-  body: string;
 
-  @Column({ nullable: false })
-  summary: string;
 
   @CreateDateColumn()
   readonly created_at?: Date;
@@ -63,8 +76,6 @@ export class ArticleEntity {
   @OneToMany(() => Media, media => media.article)
   media: Media[];
 
-  @Column()
-  slug: string;
 
   @Column()
   header_image?: string;
@@ -77,13 +88,44 @@ export class ArticleEntity {
   })
   tags: Tag[];
 
-  constructor(title: string, body: string) {
-    this.title = title;
-    this.body = body;
-    this.slug = '';
-  }
 }
+@Entity()
+export class ArticleTranslation {
+    // @PrimaryGeneratedColumn()
+    // id: number
 
+    @Column({ nullable: false })
+    title: string;
+
+    @Column({ nullable: false })
+    body: string;
+
+    @Column({ nullable: false })
+    summary: string;
+
+    @Column({ nullable: false })
+    slug: string;
+
+    @PrimaryColumn({ name: 'article_id' })
+    article_id: number;
+
+    @PrimaryColumn({ name: 'language_id', nullable: false })
+    language_id: number;
+
+    @ManyToOne(type => ArticleEntity, article => article.translations)
+    @JoinColumn({ name: 'article_id', referencedColumnName: 'id' })
+    article: ArticleEntity;
+
+    @ManyToOne(type => Language, language => language.articleTranslations)
+    @JoinColumn({ name: 'language_id', referencedColumnName: 'id' })
+    language: Language;
+
+    constructor(title: string, body: string) {
+        this.title = title;
+        this.body = body;
+        this.slug = '';
+    }
+}
 
 
 @Entity()
