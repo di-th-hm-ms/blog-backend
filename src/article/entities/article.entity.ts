@@ -32,8 +32,11 @@ export class Language {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: false })
   name: string;
+
+  @Column({ nullable: false })
+  language: string;
 
   @OneToMany(type => ArticleTranslation, articleTranslation => articleTranslation.language)
   articleTranslations: ArticleTranslation[];

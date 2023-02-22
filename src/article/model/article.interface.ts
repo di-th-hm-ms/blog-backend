@@ -20,6 +20,7 @@ export interface ArticleTranslationIF {
 export interface LanguageIF {
     id?: number
     name: string
+    language: string
 }
 
 export interface CategoryIF {
@@ -49,4 +50,31 @@ export interface TagIF {
 export interface ArticleTag {
     article_id: number
     tag_ids: number[]
+}
+
+export interface GptReqBody {
+    model: string;
+    prompt: string;
+    temperature: number;
+    max_tokens: number;
+}
+
+// export interface GptReqOptions {
+//     method: 'POST';
+//     headers: {
+//         'Content-Type': string;
+//         'Authorization': string;
+//     }
+//     payload?: string;
+// }
+export interface GptReqOptions {
+    'headers': {
+        'Content-Type': string;
+        'Authorization': string;
+    }
+}
+
+export interface GptProperties {
+    prompt: string;
+    language: string;
 }

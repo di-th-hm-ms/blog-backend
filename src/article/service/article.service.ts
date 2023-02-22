@@ -30,7 +30,7 @@ export class ArticleService {
         articleIF.updated_at = date;
         return this.generateSlug(articleIF.translation.title).pipe(
             switchMap((slug: string) => {
-                articleIF.translation.slug = slug;
+                articleIF.translation.slug = slug ? slug : articleIF.translation.title;
                 const translation: ArticleTranslationIF = articleIF.translation
                 // you need to adapt to before where body is changed.
                 if (!translation) return of(new Error('no translation error'));
@@ -46,11 +46,6 @@ export class ArticleService {
                         )
                     })
                 );
-                return from(this.translationRepository.save(translation)).pipe(
-                    switchMap(() => {
-                        return this.articleRepository.save(articleIF)
-                    })
-                )
             })
         )
     }
